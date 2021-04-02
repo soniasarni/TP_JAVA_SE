@@ -91,6 +91,11 @@ public class Seconnecter extends JFrame implements IDAO<Seconnecter> {
 			public void actionPerformed(ActionEvent e) {
 		          email_saisi1=email1.getText();
 				  pwd_saisi1=pwd1.getText();
+				  if (email_saisi1.equals("")||pwd_saisi1.equals("")) {
+					  JOptionPane.showMessageDialog(null,"veuillez remplir les champs",	
+								"Authentification", JOptionPane.WARNING_MESSAGE);
+					  
+				  }else
 				  try {
 				  PreparedStatement req = connect.prepareStatement("SELECT * FROM Utilisateur WHERE email=? "
 										+ " AND pwd=?");
