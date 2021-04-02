@@ -74,14 +74,14 @@ public class Seconnecter extends JFrame implements IDAO<Seconnecter> {
 		getContentPane().add(lblPwd);
 		
 		email1 = new JTextField();
-		email1.setBackground(new Color(204, 204, 204));
+		email1.setBackground(new Color(255, 204, 255));
 		email1.setFont(new Font("SansSerif", Font.BOLD, 18));
 		email1.setBounds(235, 181, 399, 45);
 		getContentPane().add(email1);
 		email1.setColumns(10);
 		
 		pwd1 = new JPasswordField();
-		pwd1.setBackground(new Color(204, 204, 204));
+		pwd1.setBackground(new Color(255, 204, 255));
 		pwd1.setFont(new Font("SansSerif", Font.BOLD, 18));
 		pwd1.setBounds(235, 258, 399, 45);
 		getContentPane().add(pwd1);
@@ -106,11 +106,14 @@ public class Seconnecter extends JFrame implements IDAO<Seconnecter> {
 				  ResultSet rs = req.executeQuery();
 								 
 				  if(rs.next()) {
-				  JOptionPane.showMessageDialog( null,"Bienvenue  " +email_saisi1);
+				  JOptionPane.showMessageDialog( null,"Bienvenue  " +email_saisi1,"Authentification",JOptionPane.PLAIN_MESSAGE);
 			  dispose();
+			  Articles art1=new Articles();
+			  art1.setVisible(true);
+			  
 //									 
 				 }else {
-					 JOptionPane.showMessageDialog(null, "Login / mot de passe incorrects");
+					 JOptionPane.showMessageDialog(null, "Login ou mot de passe incorrects","Authentification",JOptionPane.ERROR_MESSAGE);
 					 
 				 }
 				  }catch(Exception e1) {
@@ -120,7 +123,7 @@ public class Seconnecter extends JFrame implements IDAO<Seconnecter> {
 				  };
 				  });
 		btnConnecter.setFont(new Font("SansSerif", Font.BOLD, 18));
-		btnConnecter.setBackground(new Color(169, 169, 169));
+		btnConnecter.setBackground(new Color(102, 51, 102));
 		btnConnecter.setBounds(305, 387, 243, 52);
 		getContentPane().add(btnConnecter);
 		}
