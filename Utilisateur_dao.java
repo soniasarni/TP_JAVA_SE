@@ -26,6 +26,12 @@ public class Utilisateur_dao implements IDAO<Utilisateur> {
 	
 	
 }
+
+		@Override
+		public void read(Utilisateur objet) {
+			// TODO Auto-generated method stub
+			
+		}
 }
 
 
