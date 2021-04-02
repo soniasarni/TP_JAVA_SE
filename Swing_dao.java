@@ -5,6 +5,7 @@ import javax.swing.JScrollPane;
 import java.awt.BorderLayout;
 import javax.swing.JPanel;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
 import java.awt.Color;
 import java.awt.EventQueue;
@@ -119,8 +120,11 @@ public class Swing_dao extends JFrame{
 			email_saisi=email.getText();
 			nom_saisi=nom.getText();
 			prenom_saisi=prenom.getText();
-//			Utilisateur per= new Utilisateur( nom_saisi, prenom_saisi, email_saisi, pwd_saisi);
-//			Utilisateur_dao perdao=new Utilisateur_dao();
+
+			if (nom_saisi.equals("")||prenom_saisi.equals("")||email_saisi.equals("")||pwd_saisi.equals("")) {
+				JOptionPane.showMessageDialog(null,"veuillez remplir les champs",	
+				"Authentification", JOptionPane.WARNING_MESSAGE);
+				}else {
 			try {
 				PreparedStatement req= connect.prepareStatement("INSERT INTO Utilisateur"
 						+"(nom,prenom,email,pwd)VALUES(?,?,?,?)");
@@ -129,12 +133,15 @@ public class Swing_dao extends JFrame{
 				req.setString(3,email_saisi);
 				req.setString(4,pwd_saisi);
 				
+					
 				req.executeUpdate();
 				System.out.println("insert success");
+				
 			}catch(Exception e1) {
 				e1.printStackTrace();
 			}
 			}
+		  }
 		});
 		btnAjouter.setBackground(new Color(0, 0, 205));
 		btnAjouter.setFont(new Font("SansSerif", Font.BOLD, 18));
@@ -149,7 +156,13 @@ public class Swing_dao extends JFrame{
 		formulaire.setBounds(174, 51, 467, 42);
 		panel.add(formulaire);
 		
-
+		
+		
+		
+		
+		
+		
+		
 	}
 	}
 
