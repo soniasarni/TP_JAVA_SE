@@ -22,12 +22,14 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextPane;
 import java.awt.ScrollPane;
 import java.awt.Dimension;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class Liste extends JFrame {
 	private JTextField date_saisi;
 	private JTextField destination_saisi;
 	private JTextField prix_saisi;
-	private JTextField textField;
+	private JTextField search;
 	
 	ArrayList<Ma_liste >destinations=new ArrayList<>();
 	DefaultTableModel modele;
@@ -128,28 +130,75 @@ public class Liste extends JFrame {
 		
 		btn_Add.setBackground(new Color(255, 204, 255));
 		btn_Add.setFont(new Font("Script MT Bold", Font.BOLD | Font.ITALIC, 19));
-		btn_Add.setBounds(10, 11, 149, 45);
+		btn_Add.setBounds(48, 11, 149, 45);
 		panel_1.add(btn_Add);
 		
+		// SUPPRIMER DES ELEMENTS DANS MON TABLEAU INTER GRAPH  
+		
 		JButton btnDelete = new JButton("Delete");
+		btnDelete.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				//initialiser le modele DANS LE TABLEAU
+				modele=(DefaultTableModel)table_1.getModel();
+				int ligne=table_1.getSelectedRow();
+				if(ligne!=-1) {
+					//supprimer dans mon arraylist
+					destinations.remove(ligne);
+					
+					//enlever dans mon tableau dans l'interface graphique
+					modele.removeRow(ligne);
+					
+					//vider mes champs de saisie
+					destination_saisi.setText("");
+					date_saisi.setText("");
+					prix_saisi.setText("");
+					
+					//remettre le curseur a sa place
+					destination_saisi.requestFocus();
+				}
+			}
+		});
 		btnDelete.setFont(new Font("Script MT Bold", Font.BOLD | Font.ITALIC, 19));
 		btnDelete.setBackground(new Color(255, 204, 255));
-		btnDelete.setBounds(169, 11, 149, 45);
+		btnDelete.setBounds(243, 11, 149, 45);
 		panel_1.add(btnDelete);
 		
 		JButton btnUpDate = new JButton("UpDate");
+		//modifier mon tableau
+		
+		btnUpDate.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				modele=(DefaultTableModel)table_1.getModel();
+				int ligne=table_1.getSelectedRow();
+				if(ligne!=-1) {
+					//modifier dans mon arraylist
+					destinations.get(ligne).setDestination(destination_saisi.getText());
+					destinations.get(ligne).setDate(date_saisi.getText());
+					destinations.get(ligne).setPrix(Float.valueOf(prix_saisi.getText()));
+					
+					
+				//modifier dans mon tableau dans l'interface graphique
+				//modele.SetValueAt(nouvellevateur,lalignedeLaCase,COLONECASE)
+					modele.setValueAt(destination_saisi.getText(),ligne,1);
+					modele.setValueAt(date_saisi.getText(),ligne,2);
+					modele.setValueAt(prix_saisi.getText(),ligne,3);
+					
+					
+					//vider mes champs de saisie
+					destination_saisi.setText("");
+					date_saisi.setText("");
+					prix_saisi.setText("");
+					
+					//remettre le curseur a sa place
+					destination_saisi.requestFocus();
+				}
+			}
+		});
 		btnUpDate.setFont(new Font("Script MT Bold", Font.BOLD | Font.ITALIC, 19));
 		btnUpDate.setBackground(new Color(255, 204, 255));
 		btnUpDate.setForeground(new Color(102, 0, 102));
-		btnUpDate.setBounds(328, 11, 149, 45);
+		btnUpDate.setBounds(438, 11, 149, 45);
 		panel_1.add(btnUpDate);
-		
-		JButton btnSelect = new JButton("Select");
-		btnSelect.setBackground(new Color(255, 204, 255));
-		btnSelect.setForeground(new Color(102, 0, 102));
-		btnSelect.setFont(new Font("Script MT Bold", Font.BOLD | Font.ITALIC, 19));
-		btnSelect.setBounds(487, 11, 142, 45);
-		panel_1.add(btnSelect);
 		
 		JPanel panel_3 = new JPanel();
 		panel_3.setBounds(50, 292, 639, 109);
@@ -157,21 +206,49 @@ public class Liste extends JFrame {
 		panel.add(panel_3);
 		panel_3.setLayout(null);
 		
-		JLabel lblrecherche = new JLabel("Search");
-		lblrecherche.setOpaque(true);
-		lblrecherche.setForeground(new Color(102, 0, 102));
-		lblrecherche.setBackground(new Color(255, 204, 255));
-		lblrecherche.setHorizontalAlignment(SwingConstants.CENTER);
-		lblrecherche.setFont(new Font("Script MT Bold", Font.BOLD | Font.ITALIC, 19));
-		lblrecherche.setBounds(10, 23, 171, 63);
-		panel_3.add(lblrecherche);
+		search = new JTextField();
+		search.setFont(new Font("SansSerif", Font.BOLD, 19));
+		search.setBackground(new Color(255, 240, 245));
+		search.setBounds(191, 22, 438, 63);
+		panel_3.add(search);
+		search.setColumns(10);
 		
-		textField = new JTextField();
-		textField.setFont(new Font("SansSerif", Font.BOLD, 19));
-		textField.setBackground(new Color(255, 240, 245));
-		textField.setBounds(191, 22, 438, 63);
-		panel_3.add(textField);
-		textField.setColumns(10);
+		JButton btnSearch = new JButton("Search");
+		
+		
+		//chercher une distination dans arraylist
+		btnSearch.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				modele=(DefaultTableModel)table_1.getModel();
+				boolean trouve= false;
+				int indice=0;
+				if(search.getText().equals("")){
+				JOptionPane.showMessageDialog(null,"veuillez entrer la destination svp","destination recherché",
+						JOptionPane.ERROR_MESSAGE);	
+					trouve=false;
+				}else {
+					
+				String destinationRecherche=search.getText();
+				for(int i=0;i<destinations.size();i++) {
+					Ma_liste dest= destinations.get(i);
+					if(destinationRecherche.equals(dest.getDestination())){
+					trouve=true;
+					indice=i;
+					break;
+					}
+				}
+			}
+				if(trouve) {
+					destination_saisi.setText(destinations.get(indice).getDestination());
+					date_saisi.setText(destinations.get(indice).getDate());
+					prix_saisi.setText(String.valueOf(destinations.get(indice).getPrix()));
+					table_1.setRowSelectionInterval(0, destinations.size());
+				}
+			}
+		});
+		btnSearch.setFont(new Font("Script MT Bold", Font.BOLD | Font.ITALIC, 19));
+		btnSearch.setBounds(10, 22, 171, 63);
+		panel_3.add(btnSearch);
 		
 		ScrollPane scrollPane_1 = new ScrollPane();
 		scrollPane_1.setBounds(50, 417, 639, 203);
@@ -179,11 +256,27 @@ public class Liste extends JFrame {
 		panel.add(scrollPane_1);
 		
 		table_1 = new JTable();
+		table_1.setForeground(new Color(255, 240, 245));
+		table_1.addMouseListener(new MouseAdapter() {
+			//creer une evenement dans le tableau quand je clic 
+			//remplir les champs avec les composant de la ligne selectionner
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				modele=(DefaultTableModel)table_1.getModel();
+				int ligne=table_1.getSelectedRow();
+				if(ligne!=-1) {
+					//je recupere les information dans arraylist
+					destination_saisi.setText(destinations.get(ligne).getDestination());
+					date_saisi.setText(destinations.get(ligne).getDate());
+					prix_saisi.setText(String.valueOf(destinations.get(ligne).getPrix()));
+				}
+			}
+		});
 		table_1.setAutoCreateRowSorter(true);
 		table_1.setSurrendersFocusOnKeystroke(true);
 		table_1.setPreferredSize(new Dimension(0, 23));
 		table_1.setColumnSelectionAllowed(true);
-		table_1.setFont(new Font("SansSerif", Font.BOLD, 18));
+		table_1.setFont(new Font("SansSerif", Font.BOLD, 12));
 		scrollPane_1.add(table_1);
 		table_1.setModel(new DefaultTableModel(
 			new Object[][] {
@@ -204,16 +297,16 @@ public class Liste extends JFrame {
 		table_1.getColumnModel().getColumn(2).setResizable(false);
 		table_1.getColumnModel().getColumn(3).setResizable(false);
 		table_1.setBounds(50, 412, 635, 209);
-		table_1.setBackground(new Color(255, 240, 245));
+		table_1.setBackground(new Color(102, 0, 102));
 //		
 		btn_Add.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				ajouterDis();
 			}
 
-			boolean ajout=true; 
 			private void ajouterDis() {
 				modele=(DefaultTableModel)table_1.getModel();
+				boolean ajout=true; 
 				if(destination_saisi.getText().equals("")|| date_saisi.getText().equals("")|| prix_saisi.getText().equals("")) {
 				JOptionPane.showMessageDialog(null,"remplissez tous les champs","message", JOptionPane.ERROR_MESSAGE);
 				ajout=false;
@@ -239,15 +332,19 @@ public class Liste extends JFrame {
 							destination1.getDestination(),destination1.getDate(),
 							destination1.getPrix()});
 					//vider les champs de saisie
-					destination_saisi.setText("");
-					date_saisi.setText("");
-					prix_saisi.setText("");
-					//remettre le curseur a sa place
-					destination_saisi.requestFocus();
-					
+					viderChamps();
 				}
 			}
+			
+			//CReer une methode qui va veder les champs de saisies
+			private void viderChamps() {
+				destination_saisi.setText("");
+				date_saisi.setText("");
+				prix_saisi.setText("");
+				//remettre le curseur a sa place
+				destination_saisi.requestFocus();
+				
+			}
 		});
-		
 		 }
 	}
