@@ -27,6 +27,7 @@ public class Swing_dao extends JFrame{
 	private String prenom_saisi;
 	private JTextField prenom;
 	private JTextField nom;
+	
 	Connection connect = ConnectionBase.getConnection();
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -34,6 +35,9 @@ public class Swing_dao extends JFrame{
 				try {
 					Swing_dao frame = new Swing_dao();
 					frame.setVisible(true);
+					frame.setTitle("formulaire d'inscription");
+					//frame.setResizable(false);
+					frame.setLocationRelativeTo(null);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -45,12 +49,11 @@ public class Swing_dao extends JFrame{
 		
 		JPanel panel = new JPanel();
 		panel.setBackground(new Color(0, 0, 0));
-		panel.setBounds(10, 11, 740, 652);
+		panel.setBounds(10, 11, 813, 904);
 		getContentPane().add(panel);
 		panel.setLayout(null);
 		
-		JLabel lblEmail = new JLabel("Email");
-		lblEmail.setForeground(new Color(0, 0, 0));
+		JLabel lblEmail = new JLabel("Email");		lblEmail.setForeground(new Color(0, 0, 0));
 		lblEmail.setFont(new Font("SansSerif", Font.BOLD, 18));
 		lblEmail.setOpaque(true);
 		lblEmail.setBackground(new Color(102, 0, 102));

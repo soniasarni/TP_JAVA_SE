@@ -34,6 +34,9 @@ public class Seconnecter extends JFrame implements IDAO<Seconnecter> {
 				try {
 					Seconnecter frame = new Seconnecter();
 					frame.setVisible(true);
+					frame.setTitle("Se connecter");
+					//frame.setResizable(false);
+					frame.setLocationRelativeTo(null);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -108,7 +111,7 @@ public class Seconnecter extends JFrame implements IDAO<Seconnecter> {
 				  if(rs.next()) {
 				  JOptionPane.showMessageDialog( null,"Bienvenue  " +email_saisi1,"Authentification",JOptionPane.PLAIN_MESSAGE);
 			  dispose();
-			  Articles art1=new Articles();
+			  Accueil art1=new Accueil();
 			  art1.setVisible(true);
 			  
 //									 

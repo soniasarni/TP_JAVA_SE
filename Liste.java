@@ -12,6 +12,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.util.ArrayList;
 import java.awt.event.ActionEvent;
 import javax.swing.JTextField;
@@ -24,13 +25,15 @@ import java.awt.ScrollPane;
 import java.awt.Dimension;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 public class Liste extends JFrame {
 	private JTextField date_saisi;
 	private JTextField destination_saisi;
 	private JTextField prix_saisi;
 	private JTextField search;
-	
+	Connection connect = ConnectionBase.getConnection();
 	ArrayList<Ma_liste >destinations=new ArrayList<>();
 	DefaultTableModel modele;
 	
@@ -58,6 +61,7 @@ public class Liste extends JFrame {
 		}
 	
 	public Liste() {
+		getContentPane().setBackground(new Color(0, 0, 0));
 		getContentPane().setLayout(null);
 		
 		JPanel panel = new JPanel();
@@ -97,6 +101,18 @@ public class Liste extends JFrame {
 		panel_2.add(lblPrix);
 		
 		date_saisi = new JTextField();
+		//deplacement du cirseur automatiquement
+		date_saisi.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyTyped(KeyEvent e) {
+				char touche= e.getKeyChar();
+				if(touche==KeyEvent.VK_ENTER && !date_saisi.getText().equals(""))
+					prix_saisi.requestFocus();
+			
+				
+				
+			}
+		});
 		date_saisi.setBackground(new Color(255, 240, 245));
 		date_saisi.setForeground(new Color(0, 0, 0));
 		date_saisi.setFont(new Font("SansSerif", Font.BOLD, 18));
@@ -105,6 +121,20 @@ public class Liste extends JFrame {
 		date_saisi.setColumns(10);
 		
 		destination_saisi = new JTextField();
+		
+		//deplacement automatique du curseur dans les champs de saisie
+		destination_saisi.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyTyped(KeyEvent e) {
+				char touche= e.getKeyChar();
+				if (touche==KeyEvent.VK_ENTER && !destination_saisi.getText().equals(""))
+					date_saisi.requestFocus();
+				
+				// RENTRE QUE DES LETTRE DANS CETTE ZONE
+				if(Character.isDigit(touche))
+					e.consume();
+			}
+		});
 		destination_saisi.setBackground(new Color(255, 240, 245));
 		destination_saisi.setForeground(new Color(0, 0, 0));
 		destination_saisi.setFont(new Font("SansSerif", Font.BOLD, 18));
@@ -113,6 +143,14 @@ public class Liste extends JFrame {
 		panel_2.add(destination_saisi);
 		
 		prix_saisi = new JTextField();
+		prix_saisi.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyTyped(KeyEvent e) {
+				char touche= e.getKeyChar();
+			if(Character.isLetter(touche))
+				e.consume();
+			}
+		});
 		prix_saisi.setBackground(new Color(255, 240, 245));
 		prix_saisi.setForeground(new Color(0, 0, 0));
 		prix_saisi.setFont(new Font("SansSerif", Font.BOLD, 18));
@@ -216,7 +254,7 @@ public class Liste extends JFrame {
 		JButton btnSearch = new JButton("Search");
 		
 		
-		//chercher une distination dans arraylist
+		//chercher une distination dans arraylist si elle existe
 		btnSearch.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				modele=(DefaultTableModel)table_1.getModel();
@@ -244,6 +282,9 @@ public class Liste extends JFrame {
 					prix_saisi.setText(String.valueOf(destinations.get(indice).getPrix()));
 					table_1.setRowSelectionInterval(0, destinations.size());
 				}
+				else {
+					JOptionPane.showMessageDialog(null,"cette destination n'est plus disponible","authentification",JOptionPane.INFORMATION_MESSAGE);
+				}
 			}
 		});
 		btnSearch.setFont(new Font("Script MT Bold", Font.BOLD | Font.ITALIC, 19));
@@ -258,7 +299,9 @@ public class Liste extends JFrame {
 		table_1 = new JTable();
 		table_1.setForeground(new Color(255, 240, 245));
 		table_1.addMouseListener(new MouseAdapter() {
-			//creer une evenement dans le tableau quand je clic 
+			
+			
+			//creer un evenement dans le tableau quand je clic 
 			//remplir les champs avec les composant de la ligne selectionner
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -298,7 +341,8 @@ public class Liste extends JFrame {
 		table_1.getColumnModel().getColumn(3).setResizable(false);
 		table_1.setBounds(50, 412, 635, 209);
 		table_1.setBackground(new Color(102, 0, 102));
-//		
+		
+//		//AJOUTER DES DISTINATION 
 		btn_Add.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				ajouterDis();
@@ -325,22 +369,43 @@ public class Liste extends JFrame {
 					
 					Ma_liste destination1= new Ma_liste(destination_saisi.getText(),
 							date_saisi.getText(), Integer.valueOf(prix_saisi.getText()));
+					
 					//ajouter dans mon arraylist
 					destinations.add(destination1);
+					
 					//ajouter dans mon tableau
-					modele.addRow(new Object[]{destination1.getId(),
-							destination1.getDestination(),destination1.getDate(),
+					modele.addRow(new Object[]{
+							destination1.getId(),
+							destination1.getDestination(),
+							destination1.getDate(),
 							destination1.getPrix()});
+			try {
+					PreparedStatement req= connect.prepareStatement("INSERT INTO Liste"
+							+"(distination,periode,prix)VALUES(?,?,?)");
+					req.setString(1,destination_saisi.getText());
+					req.setString(2,date_saisi.getText());
+					req.setString(3,prix_saisi.getText());
+					//req.setString(4,pwd_saisi);
+					
+						
+					req.executeUpdate();
+					System.out.println("insert success");
+					
+				}catch(Exception e1) {
+					e1.printStackTrace();
+				}
+					
 					//vider les champs de saisie
 					viderChamps();
 				}
 			}
 			
-			//CReer une methode qui va veder les champs de saisies
+			//CReer une methode qui va vider les champs de saisies
 			private void viderChamps() {
 				destination_saisi.setText("");
 				date_saisi.setText("");
 				prix_saisi.setText("");
+				
 				//remettre le curseur a sa place
 				destination_saisi.requestFocus();
 				
