@@ -183,8 +183,9 @@ public class Liste extends JFrame {
 					//supprimer dans mon arraylist
 					destinations.remove(ligne);
 					
-					//enlever dans mon tableau dans l'interface graphique
+					//supprimer dans mon tableau de l'interface graphique
 					modele.removeRow(ligne);
+					
 					
 					//vider mes champs de saisie
 					destination_saisi.setText("");

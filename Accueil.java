@@ -149,7 +149,8 @@ public class Accueil extends JFrame{
 		btnV_Liste.setForeground(new Color(255, 204, 255));
 		btnV_Liste.setFont(new Font("Script MT Bold", Font.BOLD | Font.ITALIC, 30));
 		btnV_Liste.setBounds(607, 572, 187, 42);
-		getContentPane().add(btnV_Liste);
+		getContentPane().add(btnV_Liste)
+		;
 		
 	
 	}
